@@ -1,5 +1,4 @@
 datetime
 ip2geotools
-json
 requests
 urllib
