@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/home/certifire/monitoring_worker/bin/python
 
 import os
 
