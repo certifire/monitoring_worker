@@ -1,0 +1,11 @@
+[Unit]
+Description=Certifire Monitoring Worker Service
+After=network.target
+
+[Service]
+User=certifire
+WorkingDirectory=/home/certifire/certifire_monitoring_worker
+ExecStart=python /home/certifire/certifire_monitoring_worker/worker.py
+
+[Install]
+WantedBy=multi-user.target

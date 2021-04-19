@@ -62,6 +62,6 @@ while True:
 
     post_mon_data = requests.post(urljoin(env['certifire_url'],'api/monitoring'), auth=auth, data=json.dumps(payload))
     print(post_mon_data.status_code)
-    print(post_mon_data.text)
+    #print(post_mon_data.text)
     time.sleep(60)
 

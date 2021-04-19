@@ -1,6 +1,5 @@
 datetime
 ip2geotools
 json
-python-dotenv
 requests
 urllib
