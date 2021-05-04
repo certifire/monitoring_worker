@@ -7,12 +7,15 @@ import requests
 
 def response_time(url):
     try:
-        response = requests.get(url, timeout=2)
         try:
-            rtime = round(response.elapsed.total_seconds() * 1000, 3)
-            return rtime, response.status_code
+            response = requests.get(url, timeout=2)
+            try:
+                rtime = round(response.elapsed.total_seconds() * 1000, 3)
+                return rtime, response.status_code
+            except:
+                return -1, response.status_code
         except:
-            return -1, response.status_code
+            return -1, 404
     except:
         return -1, 500
 

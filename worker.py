@@ -68,7 +68,7 @@ else:
     worker_url = urljoin(env['certifire_url'],'api/worker/')
     worker_url = urljoin(worker_url, str(env['id']))
     print(worker_url)
-    worker = requests.get(worker_url)
+    worker = requests.get(worker_url, auth=auth)
 
     if worker.status_code == 401:
         env = new_worker(env)
