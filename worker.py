@@ -6,6 +6,7 @@ import os
 import socketserver
 import time
 from functools import partial
+from threading import Thread
 from urllib.parse import urljoin
 
 import requests
@@ -24,7 +25,7 @@ if env['mon_bw']:
 
     with socketserver.TCPServer(("", PORT, ), Handler) as httpd:
         print("serving mon_bw static files at port", PORT)
-        httpd.serve_forever()
+        Thread(target=httpd.serve_forever)
 
 def new_worker(env):
     if not env['ip']:
