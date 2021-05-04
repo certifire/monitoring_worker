@@ -7,7 +7,7 @@ import requests
 
 def response_time(url):
     try:
-        response = requests.get(url)
+        response = requests.get(url, timeout=2)
         try:
             rtime = round(response.elapsed.total_seconds() * 1000, 3)
             return rtime, response.status_code

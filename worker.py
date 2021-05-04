@@ -1,20 +1,32 @@
 #!/home/certifire/monitoring_worker/bin/python
 
+import http.server
+import json
 import os
+import socketserver
+import time
+from functools import partial
+from urllib.parse import urljoin
 
 import requests
 from requests.auth import HTTPBasicAuth
-from urllib.parse import urljoin
-import json
+
 from latency import ping_latency, response_time
-import time
 
 with open("env.json", "r") as envfile:
     env = json.load(envfile)
 auth = HTTPBasicAuth(env['certifire_uname'], env['certifire_pwd'])
 
-if not env["id"]:
+if env['mon_bw']:
+    PORT = 8000
 
+    Handler = partial(http.server.SimpleHTTPRequestHandler, directory='./static')
+
+    with socketserver.TCPServer(("", PORT, ), Handler) as httpd:
+        print("serving mon_bw static files at port", PORT)
+        httpd.serve_forever()
+
+def new_worker(env):
     if not env['ip']:
         env['ip'] = requests.get("http://ifconfig.me/ip").text
 
@@ -28,17 +40,44 @@ if not env["id"]:
         'host': env['host'],
         'location': env['location'],
         'mon_self': env['mon_self'],
-        'create_host': env['create_host']
+        'create_host': env['create_host'],
+        'mon_url': env['mon_url'],
+        'bw_url': env['bw_url']
     }
 
     create_worker = requests.post(urljoin(env['certifire_url'],'api/worker'), auth=auth, data=json.dumps(payload))
     worker = json.loads(create_worker.text)
     for key in worker:
         env[key] = worker[key]
+
+    if env['mon_self'] and not env['mon_url']:
+        env['mon_url'] = 'http://' + env['host']
     
+    if env['mon_bw'] and not env['bw_url']:
+        env['bw_url'] = urljoin('http://' + env['host'] + ':8000', 'bwmon/10M')
+    return env
+
+
+if not env["id"]:
+    env = new_worker(env)
     with open("env.json", "w") as envfile:
         json.dump(env, envfile, indent=4)
-    
+
+else:
+    worker_url = urljoin(env['certifire_url'],'api/worker/')
+    worker_url = urljoin(worker_url, str(env['id']))
+    print(worker_url)
+    worker = requests.get(worker_url)
+
+    if worker.status_code == 401:
+        env = new_worker(env)
+        with open("env.json", "w") as envfile:
+            json.dump(env, envfile, indent=4)
+    else:
+        worker = json.loads(worker.text)
+        print(worker)
+
+
 worker_tags=f"""mon_worker={env['id']},mon_host={env['host']},mon_location={env['location']}"""
 
 while True:
@@ -56,7 +95,7 @@ while True:
             print(linedata)
             payload['data'].append(linedata)
     
-        if rtime != -1:
+        if rtime != -1 or stcode != -1:
             lrdata = f""" delay={rtime},status={stcode} """
             linedata = f"""response_time,host={target['host']},""" + worker_tags + lrdata + strtime
             print(linedata)
