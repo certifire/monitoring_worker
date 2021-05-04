@@ -12,7 +12,7 @@ from urllib.parse import urljoin
 import requests
 from requests.auth import HTTPBasicAuth
 
-from latency import ping_latency, response_time
+from latency import bandwidth, ping_latency, response_time
 
 with open("env.json", "r") as envfile:
     env = json.load(envfile)
@@ -92,6 +92,8 @@ while True:
     for target in targets.values():
         pdata = ping_latency(target['host'])
         rtime, stcode = response_time(target['url'])
+        if target['bw_url']:
+            bw = bandwidth(target['bw_url'])
         strtime = str(time.time_ns())
         
         if pdata != -1:
@@ -105,6 +107,11 @@ while True:
             linedata = f"""response_time,host={target['host']},""" + worker_tags + lrdata + strtime
             print(linedata)
             payload['data'].append(linedata)
+        
+        bwdata = f""" bps={bw} """
+        linedata = f"""response_time,host={target['host']},""" + worker_tags + bwdata + strtime
+        print(linedata)
+        payload['data'].append(linedata)
 
     post_mon_data = requests.post(urljoin(env['certifire_url'],'api/monitoring'), auth=auth, data=json.dumps(payload))
     print(post_mon_data.status_code)

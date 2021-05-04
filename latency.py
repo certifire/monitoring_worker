@@ -1,6 +1,8 @@
+import io
 import re
 import subprocess
 import sys
+import time
 
 import requests
 
@@ -42,3 +44,20 @@ def ping_latency(host):
         return -1                       #TODO implement for windows host
     else:
         return -1
+
+def bandwidth(url):
+    try:
+        with io.BytesIO() as f:
+            start = time.perf_counter()
+            r = requests.get(url, stream=True)
+            total_length = r.headers.get('content-length')
+            print(total_length)
+            if total_length is None: # no content length header
+                f.write(r.content)
+            else:
+                for chunk in r.iter_content(1024):
+                    f.write(chunk)
+            stop = time.perf_counter()
+        return int((int(total_length) * 8) / (stop-start))
+    except:
+        return 0
