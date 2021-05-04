@@ -90,6 +90,7 @@ while True:
     payload = {'id': env['id'], 'data':[]}
 
     for target in targets.values():
+        print(target)
         pdata = ping_latency(target['host'])
         rtime, stcode = response_time(target['url'])
         if target['bw_url']:
@@ -109,7 +110,7 @@ while True:
             payload['data'].append(linedata)
         
         bwdata = f""" bps={bw} """
-        linedata = f"""response_time,host={target['host']},""" + worker_tags + bwdata + strtime
+        linedata = f"""bandwidth,host={target['host']},""" + worker_tags + bwdata + strtime
         print(linedata)
         payload['data'].append(linedata)
 
