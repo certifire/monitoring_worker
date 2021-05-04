@@ -18,14 +18,17 @@ with open("env.json", "r") as envfile:
     env = json.load(envfile)
 auth = HTTPBasicAuth(env['certifire_uname'], env['certifire_pwd'])
 
-if env['mon_bw']:
-    PORT = 8000
-
+def server(PORT=8000):
     Handler = partial(http.server.SimpleHTTPRequestHandler, directory='./static')
 
     with socketserver.TCPServer(("", PORT, ), Handler) as httpd:
         print("serving mon_bw static files at port", PORT)
-        Thread(target=httpd.serve_forever)
+        httpd.serve_forever()
+
+if env['mon_bw']:
+        T = Thread(target=server)
+        T.start()
+        
 
 def new_worker(env):
     if not env['ip']:
