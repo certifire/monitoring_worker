@@ -42,6 +42,7 @@ def new_worker(env):
         'location': env['location'],
         'mon_self': env['mon_self'],
         'create_host': env['create_host'],
+        'mon_bw': env['mon_bw'],
         'mon_url': env['mon_url'],
         'bw_url': env['bw_url']
     }
