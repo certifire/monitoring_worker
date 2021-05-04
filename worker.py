@@ -47,7 +47,7 @@ while True:
 
     for target in targets.values():
         pdata = ping_latency(target['host'])
-        rtime = response_time(target['url'])
+        rtime, stcode = response_time(target['url'])
         strtime = str(time.time_ns())
         
         if pdata != -1:
@@ -57,7 +57,7 @@ while True:
             payload['data'].append(linedata)
     
         if rtime != -1:
-            lrdata = f""" delay={rtime} """
+            lrdata = f""" delay={rtime},status={stcode} """
             linedata = f"""response_time,host={target['host']},""" + worker_tags + lrdata + strtime
             print(linedata)
             payload['data'].append(linedata)

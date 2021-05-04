@@ -8,9 +8,13 @@ import requests
 def response_time(url):
     try:
         response = requests.get(url)
-        return round(response.elapsed.total_seconds() * 1000, 3)
+        try:
+            rtime = round(response.elapsed.total_seconds() * 1000, 3)
+            return rtime, response.status_code
+        except:
+            return -1, response.status_code
     except:
-        return -1
+        return -1, 500
 
 def ping_latency(host):
     if sys.platform == 'linux':
