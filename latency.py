@@ -51,7 +51,7 @@ def bandwidth(url):
             start = time.perf_counter()
             r = requests.get(url, stream=True)
             total_length = r.headers.get('content-length')
-            print(total_length)
+            #print(total_length)
             if total_length is None: # no content length header
                 f.write(r.content)
             else:
