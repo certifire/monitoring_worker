@@ -19,6 +19,7 @@ Install dependencies:
 ### Legacy Installation
 After cloning, create a virtual environment and install the requirements. For Linux and Mac users:
 
+    $ sudo apt install python3-dev python3-pip python3-virtualenv build-essential
     $ git clone https://github.com/certifire/monitoring_worker.git
     $ virtualenv -p python3 monitoring_worker
     $ source monitoring_worker/bin/activate
