@@ -1,0 +1,15 @@
+{
+    "certifire_uname": "admin",
+    "certifire_pwd": "password",
+    "certifire_url": "https://api.certifire.xyz",
+    "id": null,
+    "ip": null,
+    "host": null,
+    "location": null,
+    "mon_self": true,
+    "create_host": true,
+    "mon_bw": true,
+    "mon_url": null,
+    "bw_url": null,
+    "mon_target": null
+}
